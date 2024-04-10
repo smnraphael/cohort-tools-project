@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const Cohort = require("./Cohort.model.js");
 
 // CREATE SCHEMA
 const studentSchema = new Schema(
@@ -28,7 +29,7 @@ const studentSchema = new Schema(
     },
     background: { type: String, default: "" },
     image: { type: String, default: "https://i.imgur.com/r8bo8u7.png" },
-    cohort: { type: Schema.Types.ObjectId },
+    cohort: { type: Schema.Types.ObjectId, ref: "Cohort" },
     projects: [],
   },
   { timestamps: true }
