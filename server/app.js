@@ -31,6 +31,8 @@ app.use(
 // Devs Team - Start working on the routes here:
 app.use("/", require("./routes/index.routes"));
 
+require("./error-handling")(app);
+
 // START SERVER
 app.listen(PORT, () => {
   console.log(`Server listening on port http://localhost:${PORT}`);

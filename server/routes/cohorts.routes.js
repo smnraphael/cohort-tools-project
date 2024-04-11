@@ -3,44 +3,47 @@ const Cohort = require("../models/Cohort.model");
 
 // All the routes are prefixed with /api/cohorts
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     let skip;
     let limit;
+    const campus = new RegExp(req.query.campus, "i");
+    const program = new RegExp(req.query.program, "i");
     if (req.query.limit !== undefined) {
       limit = Number(req.query.limit);
     }
     if (req.query.skip !== undefined) {
       skip = Number(req.query.skip);
     }
-    const allCohorts = await Cohort.find({}).limit(limit).skip(skip);
+    const allCohorts = await Cohort.find({ campus: campus, program: program })
+      .limit(limit)
+      .skip(skip);
     console.log("Retrieved cohorts ->", allCohorts);
     res.json(allCohorts);
   } catch (error) {
-    console.error("Error while retrieving cohorts ->", error);
-    res.status(500).send({ error: "Failed to retrieve cohorts" });
+    next(error);
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   try {
     const newCohort = await Cohort.create(req.body);
     res.status(201).send(newCohort);
   } catch (error) {
-    res.sendStatus(500);
+    next(error);
   }
 });
 
-router.get("/:cohortId", async (req, res) => {
+router.get("/:cohortId", async (req, res, next) => {
   try {
     const oneCohort = await Cohort.findOne({ _id: req.params.cohortId });
     res.status(200).json(oneCohort);
   } catch (error) {
-    res.sendStatus(500);
+    next(error);
   }
 });
 
-router.put("/:cohortId", async (req, res) => {
+router.put("/:cohortId", async (req, res, next) => {
   try {
     const updatedCohort = await Cohort.findByIdAndUpdate(
       req.params.cohortId,
@@ -49,16 +52,16 @@ router.put("/:cohortId", async (req, res) => {
     );
     res.status(200).json(updatedCohort);
   } catch (error) {
-    res.sendStatus(500);
+    next(error);
   }
 });
 
-router.delete("/:cohortId", async (req, res) => {
+router.delete("/:cohortId", async (req, res, next) => {
   try {
     const CohortToDelete = await Cohort.findByIdAndDelete(req.params.cohortId);
     res.status(204).json(CohortToDelete);
   } catch (error) {
-    res.sendStatus(500);
+    next(error);
   }
 });
 
